@@ -10,7 +10,7 @@ ENV TRANSFORMERS_CACHE=/model
 
 
 RUN python3 -c "from huggingface_hub import snapshot_download; \
-snapshot_download(repo_id='Qwen/Qwen3-Guard-4B', \
+snapshot_download(repo_id='Qwen/Qwen3Guard-Gen-4B', \
 local_dir='/model', local_dir_use_symlinks=False)"
 
 # Cleanup
