@@ -2,15 +2,15 @@ apiVersion: ai.sap.com/v1alpha1
 kind: ServingTemplate
 
 metadata:
-  name: qwen-guard-vllm
+  name: qwen3-guard-4b
   annotations: |
-    scenarios.ai.sap.com/description: "Qwen3 Guard vLLM Server - 4B"
-    scenarios.ai.sap.com/name: "qwen-guard-4b"
-    executables.ai.sap.com/description: "Qwen3 Guard vLLM inference"
-    executables.ai.sap.com/name: "qwen-guard-4b"
+    scenarios.ai.sap.com/description: "Qwen3 Guard-4B vLLM Server"
+    scenarios.ai.sap.com/name: "qwen3-guard-4b"
+    executables.ai.sap.com/description: "Qwen3 Guard-4B vLLM inference"
+    executables.ai.sap.com/name: "qwen3-guard-4b"
   labels: |
-    scenarios.ai.sap.com/id: "qwen-guard-4b"
-    ai.sap.com/version: "1.0.0"
+    scenarios.ai.sap.com/id: "qwen3-guard-4b"
+    ai.sap.com/version: "0.0.1"
 
 spec:
   inputs:
@@ -43,35 +43,3 @@ spec:
             ports:
               - containerPort: 8000
                 protocol: TCP
-
-            resources:
-              limits:
-                nvidia.com/gpu: 1
-                memory: 16Gi
-                cpu: "4"
-              requests:
-                nvidia.com/gpu: 1
-                memory: 12Gi
-                cpu: "2"
-
-            env:
-              - name: HF_HOME
-                value: "/tmp/huggingface"
-              - name: TRANSFORMERS_CACHE
-                value: "/tmp/huggingface"
-              - name: VLLM_CACHE_ROOT
-                value: "/tmp/vllm"
-
-            readinessProbe:
-              httpGet:
-                path: /v1/models
-                port: 8000
-              initialDelaySeconds: 120
-              periodSeconds: 30
-
-            livenessProbe:
-              httpGet:
-                path: /v1/models
-                port: 8000
-              initialDelaySeconds: 180
-              periodSeconds: 60
