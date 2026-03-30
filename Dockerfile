@@ -1,27 +1,34 @@
+# ---------- Stage 1: Download model ----------
+FROM python:3.10-slim as builder
+
+WORKDIR /builder
+
+RUN pip install --no-cache-dir huggingface_hub
+
+ENV HF_HOME=/model
+ENV TRANSFORMERS_CACHE=/model
+
+
+RUN python3 -c "from huggingface_hub import snapshot_download; \
+snapshot_download(repo_id='Qwen/Qwen3-Guard-4B', \
+local_dir='/model', local_dir_use_symlinks=False)"
+
+# Cleanup
+RUN rm -rf /root/.cache /tmp/*
+
+
+# ---------- Stage 2: Runtime ----------
 FROM vllm/vllm-openai:latest
 
 WORKDIR /app
 
-ENV VLLM_CONFIG_ROOT=/tmp
-ENV XDG_CACHE_HOME=/tmp
-ENV HF_HOME=/tmp
-ENV NUMBA_CACHE_DIR=/tmp
-ENV TRANSFORMERS_CACHE=/tmp
+COPY --from=builder /model /app/model
 
+RUN rm -rf /root/.cache /tmp/*
 
-RUN pip install --no-cache-dir huggingface_hub
-
-# Download 4B model during build
-RUN huggingface-cli download Qwen/Qwen3Guard-Gen-4B \
-    --local-dir /app/models/Qwen3Guard-Gen-4B \
-    --local-dir-use-symlinks False
-
-RUN chmod -R 777 /app/models
-
-# Copy start script
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-EXPOSE 8000
+EXPOSE 8080
 
-ENTRYPOINT ["/app/start.sh"]
+CMD ["/app/start.sh"]
