@@ -37,5 +37,29 @@ spec:
             image: docker.io/lokeshr11/qwen3guard-gen-4b:latest
 
             ports:
-              - containerPort: 8000
+              - containerPort: 8080
                 protocol: TCP
+
+            resources:
+              limits:
+                nvidia.com/gpu: 1
+                memory: 16Gi
+                cpu: "4"
+              requests:
+                nvidia.com/gpu: 1
+                memory: 12Gi
+                cpu: "2"
+
+            readinessProbe:
+              httpGet:
+                path: /v1/models
+                port: 8080
+              initialDelaySeconds: 120
+              periodSeconds: 30
+
+            livenessProbe:
+              httpGet:
+                path: /v1/models
+                port: 8080
+              initialDelaySeconds: 180
+              periodSeconds: 60
