@@ -1,0 +1,50 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+metadata:
+  name: qwen-guard-4b
+  annotations:
+    scenarios.ai.sap.com/description: "Qwen3 Guard 4B vLLM Server"
+    scenarios.ai.sap.com/name: "qwen-guard-4b"
+    executables.ai.sap.com/description: "Qwen3 Guard 4B vLLM inference"
+    executables.ai.sap.com/name: "qwen-guard-4b"
+  labels:
+    scenarios.ai.sap.com/id: "qwen-guard-4b"
+    ai.sap.com/version: "1.0.0"
+
+spec:
+  inputs:
+    parameters: []
+    artifacts: []
+
+  template:
+    apiVersion: "serving.kserve.io/v1beta1"
+    metadata:
+      annotations:
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: "1"
+        autoscaling.knative.dev/targetBurstCapacity: "0"
+      labels:
+        ai.sap.com/resourcePlan: infer.l   # T4 GPU
+
+    spec:
+      predictor:
+        imagePullSecrets:
+          - name: docker-registry-secret
+
+        minReplicas: 1
+        maxReplicas: 1
+
+        containers:
+          - name: kserve-container
+            image: docker.io/lokeshr11/qwen3guard-gen-4b:latest
+
+            ports:
+              - containerPort: 8000
+                protocol: TCP
+
+            resources:
+              limits:
+                nvidia.com/gpu: 1
+                memory: "16Gi"
+              requests:
+                memory: "12Gi"
