@@ -1,13 +1,14 @@
 apiVersion: ai.sap.com/v1alpha1
 kind: ServingTemplate
+
 metadata:
-  name: qwen-guard-4b
-  annotations:
-    scenarios.ai.sap.com/description: "Qwen3 Guard 4B vLLM Server"
+  name: qwen-guard-vllm
+  annotations: |
+    scenarios.ai.sap.com/description: "Qwen3 Guard vLLM Server - 4B"
     scenarios.ai.sap.com/name: "qwen-guard-4b"
-    executables.ai.sap.com/description: "Qwen3 Guard 4B vLLM inference"
+    executables.ai.sap.com/description: "Qwen3 Guard vLLM inference"
     executables.ai.sap.com/name: "qwen-guard-4b"
-  labels:
+  labels: |
     scenarios.ai.sap.com/id: "qwen-guard-4b"
     ai.sap.com/version: "1.0.0"
 
@@ -18,15 +19,16 @@ spec:
 
   template:
     apiVersion: "serving.kserve.io/v1beta1"
+
     metadata:
-      annotations:
+      annotations: |
         autoscaling.knative.dev/metric: concurrency
         autoscaling.knative.dev/target: "1"
         autoscaling.knative.dev/targetBurstCapacity: "0"
-      labels:
-        ai.sap.com/resourcePlan: infer.l   # T4 GPU
+      labels: |
+        ai.sap.com/resourcePlan: infer.l
 
-    spec:
+    spec: |
       predictor:
         imagePullSecrets:
           - name: docker-registry-secret
@@ -45,6 +47,31 @@ spec:
             resources:
               limits:
                 nvidia.com/gpu: 1
-                memory: "16Gi"
+                memory: 16Gi
+                cpu: "4"
               requests:
-                memory: "12Gi"
+                nvidia.com/gpu: 1
+                memory: 12Gi
+                cpu: "2"
+
+            env:
+              - name: HF_HOME
+                value: "/tmp/huggingface"
+              - name: TRANSFORMERS_CACHE
+                value: "/tmp/huggingface"
+              - name: VLLM_CACHE_ROOT
+                value: "/tmp/vllm"
+
+            readinessProbe:
+              httpGet:
+                path: /v1/models
+                port: 8000
+              initialDelaySeconds: 120
+              periodSeconds: 30
+
+            livenessProbe:
+              httpGet:
+                path: /v1/models
+                port: 8000
+              initialDelaySeconds: 180
+              periodSeconds: 60
