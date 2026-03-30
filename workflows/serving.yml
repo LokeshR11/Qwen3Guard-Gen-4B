@@ -2,21 +2,17 @@ apiVersion: ai.sap.com/v1alpha1
 kind: ServingTemplate
 
 metadata:
-  name: qwen3-guard-4b
-  annotations: |
+  name: qwen3guard-gen-4b-vllm
+  annotations:
     scenarios.ai.sap.com/description: "Qwen3 Guard-4B vLLM Server"
-    scenarios.ai.sap.com/name: "qwen3-guard-4b"
+    scenarios.ai.sap.com/name: "qwen3guard-4b"
     executables.ai.sap.com/description: "Qwen3 Guard-4B vLLM inference"
-    executables.ai.sap.com/name: "qwen3-guard-4b"
-  labels: |
-    scenarios.ai.sap.com/id: "qwen3-guard-4b"
-    ai.sap.com/version: "0.0.1"
+    executables.ai.sap.com/name: "qwen3guard-4b"
+  labels:
+    scenarios.ai.sap.com/id: "qwen3guard-4b"
+    ai.sap.com/version: "1.0.0"
 
 spec:
-  inputs:
-    parameters: []
-    artifacts: []
-
   template:
     apiVersion: "serving.kserve.io/v1beta1"
 
