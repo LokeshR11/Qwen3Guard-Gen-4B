@@ -1,10 +1,9 @@
 #!/bin/bash
-
 python3 -m vllm.entrypoints.openai.api_server \
-  --model /app/models/Qwen3Guard-Gen-4B \
+  --model /app/model \
   --host 0.0.0.0 \
-  --port 8000 \
-  --gpu-memory-utilization 0.85 \
-  --max-model-len 4096 \
+  --port 8080 \
+  --gpu-memory-utilization 0.75 \
+  --max-model-len 1024 \
   --dtype auto \
   --enforce-eager
