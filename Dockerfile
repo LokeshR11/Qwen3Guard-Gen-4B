@@ -35,4 +35,5 @@ ENV VLLM_USE_V1=0
 
 EXPOSE 8080
 
-CMD ["/app/start.sh"]
+ENTRYPOINT []
+CMD ["/bin/bash", "/app/start.sh"]
