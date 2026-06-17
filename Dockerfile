@@ -20,7 +20,11 @@ FROM vllm/vllm-openai:v0.8.2
 
 WORKDIR /app
 
+# Upgrade transformers - v0.8.2 bundles an old version that doesn't
+# recognize qwen3 architecture. Qwen3 support was added in 4.51.0
+RUN pip install --no-cache-dir "transformers>=4.51.0"
 
+# Copy model from builder
 COPY --from=builder /model /app/model
 
 # Cleanup
@@ -35,5 +39,7 @@ ENV VLLM_USE_V1=0
 
 EXPOSE 8080
 
+# Override base image ENTRYPOINT (vllm/vllm-openai sets its own)
+# Without this, /app/start.sh gets passed as an argument to vLLM itself
 ENTRYPOINT []
 CMD ["/bin/bash", "/app/start.sh"]
