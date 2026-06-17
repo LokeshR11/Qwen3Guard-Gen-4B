@@ -20,9 +20,10 @@ FROM vllm/vllm-openai:v0.8.2
 
 WORKDIR /app
 
-# Upgrade transformers - v0.8.2 bundles an old version that doesn't
-# recognize qwen3 architecture. Qwen3 support was added in 4.51.0
-RUN pip install --no-cache-dir "transformers>=4.51.0"
+
+RUN pip install --no-cache-dir \
+    "transformers==4.51.3" \
+    "tokenizers==0.21.1"
 
 # Copy model from builder
 COPY --from=builder /model /app/model
@@ -30,7 +31,7 @@ COPY --from=builder /model /app/model
 # Cleanup
 RUN rm -rf /root/.cache /tmp/*
 
-
+# Copy startup script
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
