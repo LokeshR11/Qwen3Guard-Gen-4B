@@ -4,26 +4,11 @@ WORKDIR /builder
 
 RUN pip install --no-cache-dir huggingface_hub
 
-ENV HF_HOME=/model
-ENV TRANSFORMERS_CACHE=/model
-
 RUN python3 -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Qwen/Qwen3Guard-Gen-4B', local_dir='/model', local_dir_use_symlinks=False)"
-
-RUN rm -rf /root/.cache /tmp/*
-
-# ==========================
-
-# Runtime Stage
-
-# ==========================
 
 FROM vllm/vllm-openai:v0.8.2
 
 WORKDIR /app
-
-RUN pip install --no-cache-dir 
-"transformers>=4.53.0" 
-"tokenizers>=0.21.2"
 
 COPY --from=builder /model /app/model
 
