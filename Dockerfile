@@ -24,4 +24,6 @@ EXPOSE 8080
 
 ENTRYPOINT []
 
+#v1
+
 CMD ["/bin/bash", "/app/start.sh"]
