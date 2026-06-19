@@ -1,4 +1,4 @@
-FROM python:3.10-slim as builder
+FROM python:3.10-slim AS builder
 
 WORKDIR /builder
 
@@ -7,16 +7,15 @@ RUN pip install --no-cache-dir huggingface_hub
 ENV HF_HOME=/model
 ENV TRANSFORMERS_CACHE=/model
 
-RUN python3 -c "from huggingface_hub import snapshot_download; 
-snapshot_download( 
-repo_id='Qwen/Qwen3Guard-Gen-4B', 
-local_dir='/model', 
-local_dir_use_symlinks=False 
-)"
+RUN python3 -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Qwen/Qwen3Guard-Gen-4B', local_dir='/model', local_dir_use_symlinks=False)"
 
 RUN rm -rf /root/.cache /tmp/*
 
-# ---------------- Runtime ----------------
+# ==========================
+
+# Runtime Stage
+
+# ==========================
 
 FROM vllm/vllm-openai:v0.8.2
 
@@ -33,9 +32,11 @@ ENV TRANSFORMERS_CACHE=/app/model
 ENV VLLM_USE_V1=0
 
 COPY start.sh /app/start.sh
+
 RUN chmod +x /app/start.sh
 
 EXPOSE 8080
 
 ENTRYPOINT []
+
 CMD ["/bin/bash", "/app/start.sh"]
