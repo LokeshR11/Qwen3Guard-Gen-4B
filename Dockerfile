@@ -6,7 +6,7 @@ RUN pip install --no-cache-dir huggingface_hub
 
 RUN python3 -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Qwen/Qwen3Guard-Gen-4B', local_dir='/model', local_dir_use_symlinks=False)"
 
-FROM vllm/vllm-openai:v0.8.2
+FROM vllm/vllm-openai:v0.9.1
 
 WORKDIR /app
 
